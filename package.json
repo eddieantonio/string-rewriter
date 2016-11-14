@@ -1,0 +1,17 @@
+{
+  "name": "string-rewriter",
+  "version": "1.0.0",
+  "description": "Rewrites strings!",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "author": "Eddie Antonio Santos <easantos@ualberta.ca>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "ava": "^0.16.0"
+  },
+  "dependencies": {
+    "common-errors": "^1.0.0"
+  }
+}
