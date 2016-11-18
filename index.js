@@ -15,39 +15,7 @@
  */
 
 exports.SourceFile = require('./lib/source-file');
-const Grammar = exports.Grammar = require('./lib/grammar');
+exports.Grammar = require('./lib/grammar');
+exports.GrammarRegistry = require('./lib/grammar-registry');
 
 
-const {ArgumentError} = require('common-errors');
-
-exports.GrammarRegistry = class GrammarRegistry {
-  constructor() {
-    this._roots = new Map();
-  }
-
-  /**
-   * Adds a root grammar.
-   */
-  addRootGrammar(grammar) {
-    if (!(grammar instanceof Grammar)) {
-      throw new ArgumentError('grammar');
-    }
-
-    if (this._roots.has(grammar.name)) {
-      throw new ArgumentError('grammar', `${grammar.name} already defined`);
-    }
-
-    this._roots.set(grammar.name, grammar);
-  }
-
-  /**
-   * Yields pairs of the grammar names and their instances.
-   */
-  *[Symbol.iterator]() {
-    /* Delegate to the map's entries. */
-    for (let entry of this._roots.entries()) {
-      yield entry;
-    }
-  }
-
-};
