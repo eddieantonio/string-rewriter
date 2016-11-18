@@ -23,7 +23,7 @@ exports.Grammar = class Grammar {
       throw new ArgumentError('Requires a non-empty string name');
     }
 
-    if (!parser.parse) {
+    if (!(parser instanceof Function)) {
       throw new ArgumentError('Requires a parser');
     }
 
@@ -31,12 +31,12 @@ exports.Grammar = class Grammar {
     this.parser = parser;
   }
 
-  parse(input) {
+  parse(input, errorClass=SyntaxError) {
     try {
-      this.parser.parse(input);
+      this.parser(input);
       return true;
     } catch (e) {
-      if (e instanceof SyntaxError) {
+      if (e instanceof errorClass) {
         return false;
       }
       // rethrow...
