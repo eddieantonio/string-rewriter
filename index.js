@@ -14,4 +14,37 @@
  * limitations under the License.
  */
 
+const {ArgumentError} = require('common-errors');
+
 exports.SourceFile = require('./lib/source-file');
+exports.Grammar = class Grammar {
+  constructor(name = required(), parser = required()) {
+    if (typeof name != 'string' || name.length < 1) {
+      throw new ArgumentError('Requires a non-empty string name');
+    }
+
+    if (!parser.parse) {
+      throw new ArgumentError('Requires a parser');
+    }
+
+    this.name = name;
+    this.parser = parser;
+  }
+
+  parse(input) {
+    try {
+      this.parser.parse(input);
+      return true;
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        return false;
+      }
+      // rethrow...
+      throw e;
+    }
+  }
+};
+
+function required() {
+  throw new ArgumentError('required argument missing');
+}
