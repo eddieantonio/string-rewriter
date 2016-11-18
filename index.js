@@ -17,8 +17,9 @@
 const {ArgumentError} = require('common-errors');
 
 exports.SourceFile = require('./lib/source-file');
+
 exports.Grammar = class Grammar {
-  constructor(name = required(), parser = required()) {
+  constructor(name = required(), parser = required(), errorClass=SyntaxError) {
     if (typeof name != 'string' || name.length < 1) {
       throw new ArgumentError('Requires a non-empty string name');
     }
@@ -27,16 +28,21 @@ exports.Grammar = class Grammar {
       throw new ArgumentError('Requires a parser');
     }
 
+    if (!(errorClass instanceof Function)) {
+      throw new ArgumentError('Requires an error constructor');
+    }
+
     this.name = name;
     this.parser = parser;
+    this.errorClass = errorClass;
   }
 
-  parse(input, errorClass=SyntaxError) {
+  parse(input) {
     try {
       this.parser(input);
       return true;
     } catch (e) {
-      if (e instanceof errorClass) {
+      if (e instanceof this.errorClass) {
         return false;
       }
       // rethrow...

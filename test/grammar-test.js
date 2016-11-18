@@ -12,7 +12,7 @@ test('exists!', t => {
 test('rejects invalid arguments', t => {
   t.throws(() => { new Grammar(); }, ArgumentError);
   t.throws(() => { new Grammar(''); }, ArgumentError);
-  t.throws(() => { new Grammar('', () => undefined)}, ArgumentError);
+  t.throws(() => { new Grammar('', () => undefined); }, ArgumentError);
 });
 
 test('#parse() usage', t => {
@@ -31,27 +31,33 @@ test('#parse() usage', t => {
 });
 
 test('#parse() custom error instance', t => {
-  const g = new Grammar('<test>', string => {
-    throw new ReferenceError('');
+  const withDefault = new Grammar('<test>', () => {
+    throw new RangeError('fake error');
   });
 
-  t.throws(() => g.parse('0x0g'), ReferenceError, 'it should throw');
-  t.notThrows(() => g.parse('0x0g', ReferenceError), 'still throws error');
+  const withSpecified = new Grammar('<test>', () => {
+    throw new RangeError('fake error');
+  }, RangeError);
+
+  t.throws(() => withDefault.parse('0x0g'), RangeError);
+  t.notThrows(() => withSpecified.parse('0x0g'), 'this should not throw');
 });
 
 test('#parse() with a real grammar', t => {
   const URI = require('api-pegjs')('uri/URI');
-  const uri = new Grammar('URI', text => new URI(text)); 
 
+  // XXX: This is a terrible way of fishing the error out.
   const PegSyntaxError = (() => {
     try {
-      uri.parse('`');
+      new URI('`');
     } catch (e) {
       return e.__proto__.constructor;
     }
     throw new Error('Did not return error constructor...');
   })();
 
+  const uri = new Grammar('URI', text => new URI(text), PegSyntaxError);
+
   t.true(uri.parse('https://username:password@example.org?query=param#fragment'));
-  t.false(uri.parse('gopher:%#@!@#!&^@!%#', PegSyntaxError));
+  t.false(uri.parse('gopher:%#@!@#!&^@!%#'));
 });
