@@ -23,5 +23,27 @@ test('SourceFileFromString#strings()', t => {
     "\\n\\t"
   `);
 
-  t.deepEqual(Array.from(sourceFile.strings()), ["\n\t"]);
+  t.deepEqual(sourceFile.strings(), ["\n\t"]);
+});
+
+
+test('SourceFileFromString#strings() with templates', t => {
+  const TICK = '`';
+  const sourceFile = SourceFile.fromString(`
+    \`https://example.org/#\\u{1f4a9}\`
+  `);
+
+  t.deepEqual(sourceFile.strings(), [
+    "https://example.org/#💩"
+  ]);
+});
+
+test('SourceFileFromString#strings() multiple strings', t => {
+  const sourceFile = SourceFile.fromString(`
+    "\\n\\t", '\\v\\b', \`\\u{1f4a9}\`
+  `);
+
+  t.deepEqual(sourceFile.strings(), [
+    "\n\t", "\v\b", "💩"
+  ]);
 });
