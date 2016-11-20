@@ -16,30 +16,14 @@
 
 import test from 'ava';
 
-import {Grammar, parseGrammar} from '../';
+import {globalRegistery} from '../';
 
-test('create a Grammar instance from a PEG.js grammar', t => {
-  const grammar = parseGrammar('hello', `
-    start
-      = 'hell' 'o'+
-  `);
+test('parses ISO dates', t => {
+  const date = globalRegistery.get('iso8601');
 
-  t.true(grammar instanceof Grammar);
-  t.is(grammar.name, 'hello');
-  t.true(grammar.parse('hello'));
-  t.false(grammar.parse('hell'));
-});
-
-test('create a Grammar instance, specifying the start production', t => {
-  const grammar = parseGrammar('hello', `
-    prefix
-      = 'hello'
-
-    hello
-      = prefix 'o'*
-  `, 'hello');
-
-  t.true(grammar instanceof Grammar);
-  t.is(grammar.name, 'hello');
-  t.true(grammar.parse('hellooo'));
+  t. true(date.parse('1992-02-27'));
+  t.false(date.parse('1992-02-27T'));
+  t. true(date.parse('1992-02-27T13:00:00'));
+  t.false(date.parse('1992-02-27T13:00:00-'));
+  t. true(date.parse('1992-02-27T13:00:00-600'));
 });
