@@ -27,10 +27,26 @@ exports.extractString = (literal) => {
   /* Matches single-quoted strings, double-quouted strings, and "standalone"
    * template literals (without any interpolation). */
   if (match = literal.match(/^([`'"])((?:\s|.)*)\1$/)) {
-    console.log(!!match);
     let [_, _quote, contents] = match;
-    return contents;
+    return interpretEscapes(contents);
   }
 
   throw new Error(`Could not parse literal ${literal}`);
+
+  function interpretEscapes(string) {
+    return string.replace(/\\(\w)/g, (_, code) => {
+      /* http://www.ecma-international.org/ecma-262/7.0/#prod-SingleEscapeCharacter */
+      return {
+        "'": "'",
+        '"': '"',
+        "\\": "\\",
+        "b": "\b",
+        "f": "\f",
+        "n": "\n",
+        "r": "\r",
+        "t": "\t",
+        "v": "\v"
+      }[code];
+    });
+  }
 };
