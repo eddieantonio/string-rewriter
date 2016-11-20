@@ -1,6 +1,6 @@
 
 import test from 'ava';
-import {ArgumentError} from 'common-errors';
+import {ArgumentError, NotFoundError} from 'common-errors';
 
 import {Grammar, GrammarRegistry} from '../';
 
@@ -39,6 +39,14 @@ test('#get returns the named grammar', t => {
   registry.addRootGrammar(grammar);
 
   t.is(registry.get('uri'), grammar);
+});
+
+test('#get fails given an incorrect name', t => {
+  const registry = new GrammarRegistry();
+  const grammar = new Grammar('uri', () => true);
+  registry.addRootGrammar(grammar);
+
+  t.throws(() => registry.get('url'), NotFoundError);
 });
 
 test('is iterable', t => {
