@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-exports.SourceFile = require('./lib/source-file');
-exports.Grammar = require('./lib/grammar');
-exports.GrammarRegistry = require('./lib/grammar-registry');
+import test from 'ava';
 
-const Grammar = exports.Grammar;
-const peg = require('pegjs');
+import {Grammar, parseGrammar} from '../';
 
-exports.parseGrammar = function (name, grammar) {
-  const parser = peg.generate(grammar, {
-    output: 'parser'
-  });
+test('create a Grammar instance from a real grammar', t => {
+  const grammar = parseGrammar('hello', "start = 'hell' 'o'+");
 
-  return new Grammar(name, input => parser.parse(input), parser.SyntaxError);
-};
+  t.true(grammar instanceof Grammar);
+  t.is(grammar.name, 'hello');
+  t.true(grammar.parse('hello'));
+  t.false(grammar.parse('hell'));
+});
