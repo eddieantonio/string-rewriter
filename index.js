@@ -17,4 +17,15 @@
 exports.SourceFile = require('./lib/source-file');
 exports.Grammar = require('./lib/grammar');
 exports.GrammarRegistry = require('./lib/grammar-registry');
-exports.parseGrammar = require('./lib/parse-grammar');
+
+const parseGrammar = exports.parseGrammar = require('./lib/parse-grammar');
+
+const registry = exports.globalRegistery = new exports.GrammarRegistry();
+
+const corePeg = require('core-pegjs');
+registry.addRootGrammar(
+  parseGrammar('iso8601-date', corePeg('iso/8601-dates-times'), 'date')
+);
+registry.addRootGrammar(
+  parseGrammar('iso8601-datetime', corePeg('iso/8601-dates-times'), 'iso_date_time')
+);

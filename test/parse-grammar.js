@@ -41,5 +41,6 @@ test('create a Grammar instance, specifying the start production', t => {
 
   t.true(grammar instanceof Grammar);
   t.is(grammar.name, 'hello');
+  t.true(grammar.parse('hello'));
   t.true(grammar.parse('hellooo'));
 });
