@@ -16,6 +16,7 @@
     "common-errors": "^1.0.0",
     "core-pegjs": "^0.7.5",
     "esprima": "^3.1.1",
+    "esprima-walk": "^0.1.0",
     "sqlite3": "^3.1.8"
   }
 }
