@@ -8,7 +8,13 @@ test('from single-quoted strings', t => {
   t.is(extractString(string), 'hello');
 });
 
-test.todo('from double-quoted strings');
+test('from double-quoted strings', t => {
+  const string = `"hello"`;
+
+  t.is(extractString(string), 'hello');
+
+});
+
 test.todo('from template strings');
 test.todo('tolerates string escapes');
 test.todo('tolerates utf-16 string escapes');

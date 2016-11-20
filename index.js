@@ -23,13 +23,11 @@ exports.GrammarRegistry = require('./lib/grammar-registry');
  */
 exports.extractString = (literal) => {
   let match;
-  switch (true) {
-  case !!(match = literal.match(/^'(.*)'/)): {
-    let [_, contents] = match;
+
+  if (match = literal.match(/^(['"])(.*)\1/)) {
+    let [_, _quote, contents] = match;
     return contents;
   }
 
-  default:
-    throw new Error;
-  }
+  throw new Error;
 };
