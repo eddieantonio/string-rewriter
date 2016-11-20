@@ -18,4 +18,18 @@ exports.SourceFile = require('./lib/source-file');
 exports.Grammar = require('./lib/grammar');
 exports.GrammarRegistry = require('./lib/grammar-registry');
 
+/**
+ * Converts string literals into normalized strings.
+ */
+exports.extractString = (literal) => {
+  let match;
+  switch (true) {
+  case !!(match = literal.match(/^'(.*)'/)): {
+    let [_, contents] = match;
+    return contents;
+  }
 
+  default:
+    throw new Error;
+  }
+};
