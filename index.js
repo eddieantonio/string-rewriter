@@ -24,10 +24,13 @@ exports.GrammarRegistry = require('./lib/grammar-registry');
 exports.extractString = (literal) => {
   let match;
 
-  if (match = literal.match(/^(['"])(.*)\1/)) {
+  /* Matches single-quoted strings, double-quouted strings, and "standalone"
+   * template literals (without any interpolation). */
+  if (match = literal.match(/^([`'"])((?:\s|.)*)\1$/)) {
+    console.log(!!match);
     let [_, _quote, contents] = match;
     return contents;
   }
 
-  throw new Error;
+  throw new Error(`Could not parse literal ${literal}`);
 };
