@@ -33,6 +33,13 @@ test('#addRootGrammar only accepts a unique grammars as input', t => {
   t.throws(() => { registry.addRootGrammar(copycat); }, ArgumentError);
 });
 
+test('#get returns the named grammar', t => {
+  const registry = new GrammarRegistry();
+  const grammar = new Grammar('uri', () => true);
+  registry.addRootGrammar(grammar);
+
+  t.is(registry.get('uri'), grammar);
+});
 
 test('is iterable', t => {
   const registry = new GrammarRegistry();
