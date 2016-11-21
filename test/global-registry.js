@@ -46,6 +46,10 @@ test('parses URIs', t => {
   t.true(uri.parse('https://example.org/search%20page.php?q=hello#content'));
   t.true(uri.parse('git+ssh://user@server/project.git'));
   t.false(uri.parse('https://example.org/search page.php?q=hello#content'));
+
+  /* From other tests. */
+  t.true(uri.parse('https://username:password@example.org?query=param#fragment'));
+  t.false(uri.parse('gopher:%#@!@#!&^@!%#'));
 });
 
 test('parses IPv4 addresses', t => {

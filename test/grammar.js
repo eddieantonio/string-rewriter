@@ -42,22 +42,3 @@ test('#parse() custom error instance', t => {
   t.throws(() => withDefault.parse('0x0g'), RangeError);
   t.notThrows(() => withSpecified.parse('0x0g'), 'this should not throw');
 });
-
-test('#parse() with a real grammar', t => {
-  const URI = require('api-pegjs')('uri/URI');
-
-  // XXX: This is a terrible way of fishing the error out.
-  const PegSyntaxError = (() => {
-    try {
-      new URI('`');
-    } catch (e) {
-      return e.__proto__.constructor;
-    }
-    throw new Error('Did not return error constructor...');
-  })();
-
-  const uri = new Grammar('URI', text => new URI(text), PegSyntaxError);
-
-  t.true(uri.parse('https://username:password@example.org?query=param#fragment'));
-  t.false(uri.parse('gopher:%#@!@#!&^@!%#'));
-});
