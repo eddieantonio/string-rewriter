@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+const {Corpus, _Persist} = require('../');
+
+const [_node, _script, filename] = process.argv;
+const corpus = Corpus.connect(filename);
+
+corpus.forEach(source => {
+  console.log(source.hash);
+});
+
+/* vim: set ft=javascript: */
