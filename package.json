@@ -17,7 +17,6 @@
     "ava": "^0.16.0"
   },
   "dependencies": {
-    "api-pegjs": "^0.4.23",
     "common-errors": "^1.0.0",
     "core-pegjs": "^0.7.5",
     "esprima": "^3.1.1",
