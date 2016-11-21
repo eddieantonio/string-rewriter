@@ -66,6 +66,17 @@ test('#forEach() yields each result as a SourceFile.', async t => {
 });
 
 
+test('#get() yields a SourceFile.', async t => {
+  const {corpus} = t.context;
+  const source = await corpus.get(hashA);
+
+  t.true(source instanceof SourceFile);
+  t.is(source.hash, hashA);
+  t.true(source.ast instanceof Object);
+  t.true(source.tokens instanceof Object);
+});
+
+
 function createTestSQLite3Connection() {
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database(':memory:');
