@@ -47,7 +47,6 @@ if __name__ == '__main__':
 
     for file_hash, tokens in progress_bar:
         if len(tokens) == 0:
-            logging.warn('Skipping empty file: %s', file_hash)
-        else:
-            progress_bar.set_description('Crunching %s' % (file_hash,))
-            analyze_source(filename, file_hash)
+            continue
+        progress_bar.set_description('{%s}' % (file_hash,))
+        analyze_source(filename, file_hash)
