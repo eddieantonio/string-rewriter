@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const ProgressBar = require('progress');
-const {Corpus, Persist, globalRegistry} = require('../');
+const {Corpus, Persist, globalRegistry, findOccurrences} = require('../');
 
 const [_node, _script, filename] = process.argv;
 /* Check that the file exists. */
@@ -15,14 +15,7 @@ corpus.size().then(total => {
   const progress = new ProgressBar('[:bar] :percent (:current/:total), :etas left', { total });
 
   return corpus.forEach(source => {
-    const occurrences = [];
-    for (const string of source.strings()) {
-      for (const grammar of globalRegistry.findAllMatchingGrammars(string)) {
-        occurrences.push(grammar);
-      }
-    }
-
-    persist.addOccurrences(source.hash, occurrences)
+    persist.addOccurrences(source.hash, findOccurrences(source, globalRegistry))
       .then(progress.tick())
       .catch(err => {
         console.error(err);

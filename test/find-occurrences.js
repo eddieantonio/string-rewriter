@@ -24,6 +24,7 @@ import {SourceFile, GrammarRegistry, Grammar, findOccurrences} from '../';
 test.beforeEach(t => {
   t.context.source = SourceFile.fromString(`
     console.log('hello, world!');
+    console.log('goodby, world!');
   `);
 
   const registry = t.context.registry = new GrammarRegistry();
@@ -31,8 +32,8 @@ test.beforeEach(t => {
   registry.addRootGrammar(new Grammar('hello', s => {
     return s.includes('hello') || error();
   }));
-  registry.addRootGrammar(new Grammar('<always>', () => true));
-  registry.addRootGrammar(new Grammar('<never>', () => error()));
+  registry.addRootGrammar(new Grammar('always', () => true));
+  registry.addRootGrammar(new Grammar('never', () => error()));
 
   function error() {
     throw new SyntaxError();
@@ -48,8 +49,16 @@ test('throws if not given a SourceFile and a GrammarRegistry', t => {
   t.notThrows(() => findOccurrences(source, registry), ArgumentError) ;
 });
 
-test.skip('it finds multiple occurences', t => {
-  const {source, helloGrammar} = t.context;
+test('it finds multiple occurrences', t => {
+  const {source, registry} = t.context;
+  const occurrences = findOccurrences(source, registry);
 
-  const occurences = findOccurrences();
+  const [always, hello] = ['always', 'hello'].map(s => registry.get(s));
+
+  t.is(occurrences.length, 2);
+  const expected = [
+    [hello, always],
+    [always]
+  ];
+  t.deepEqual(occurrences, expected);
 });
