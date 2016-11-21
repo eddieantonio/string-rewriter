@@ -23,3 +23,14 @@ exports.Persist = require('./lib/persist');
 exports.parseGrammar = require('./lib/parse-grammar');
 exports.globalRegistry = require('./lib/global-registry');
 
+const {SourceFile, Grammar} = exports;
+
+const {ArgumentError} = require('common-errors');
+exports.findOccurrences = function findOccurrences(source, grammar) {
+  if (!(source instanceof SourceFile)) {
+    throw new ArgumentError('source');
+  }
+  if (!(grammar instanceof Grammar)) {
+    throw new ArgumentError('grammar');
+  }
+};
