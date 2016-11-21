@@ -47,3 +47,13 @@ test('SourceFileFromString#strings() multiple strings', t => {
     "\n\t", "\v\b", "💩"
   ]);
 });
+
+test.skip('SourceFileFromString#strings() with raw templates', t => {
+  const sourceFile = SourceFile.fromString(`
+    String.raw\`\\n\\t\`
+  `);
+
+  t.deepEqual(sourceFile.strings(), [
+    "\\n\\t"
+  ]);
+});
