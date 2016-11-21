@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-exports.SourceFile = require('./lib/source-file');
-exports.Grammar = require('./lib/grammar');
-exports.GrammarRegistry = require('./lib/grammar-registry');
-exports.Corpus = require('./lib/corpus');
-exports.Persist = require('./lib/persist');
+import test from 'ava';
 
-exports.parseGrammar = require('./lib/parse-grammar');
-exports.globalRegistery = require('./lib/global-registry');
+import {ArgumentError} from 'common-errors';
+import {Persist} from '../';
 
+test('throws an error if not given a Redis connection', t => {
+  t.throws(() => new Persist(), ArgumentError);
+  t.throws(() => new Persist({}), ArgumentError);
+  /* Because setting up Redis on Travis is going to be difficult, this is as
+   * far as I'll go. */
+});
