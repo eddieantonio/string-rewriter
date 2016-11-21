@@ -19,28 +19,37 @@ import test from 'ava';
 
 import {ArgumentError} from 'common-errors';
 
-import {SourceFile, Grammar, findOccurrences} from '../';
+import {SourceFile, GrammarRegistry, Grammar, findOccurrences} from '../';
 
 test.beforeEach(t => {
   t.context.source = SourceFile.fromString(`
     console.log('hello, world!');
   `);
 
-  t.context.helloGrammar = new Grammar('<always>', s => {
+  const registry = t.context.registry = new GrammarRegistry();
+
+  registry.addRootGrammar(new Grammar('hello', s => {
     return s.includes('hello') || error();
-  });
-  t.context.alwaysMatches = new Grammar('<always>', () => true);
-  t.context.neverMatches = new Grammar('<never>', () => error());
+  }));
+  registry.addRootGrammar(new Grammar('<always>', () => true));
+  registry.addRootGrammar(new Grammar('<never>', () => error()));
+
   function error() {
     throw new SyntaxError();
   }
 });
 
-test('throws if not given a SourceFile and a Grammar', t => {
+test('throws if not given a SourceFile and a GrammarRegistry', t => {
+  const {source, registry} = t.context;
+
+  t.throws(() => findOccurrences({}, registry), ArgumentError);
+  t.throws(() => findOccurrences(source, {}), ArgumentError);
+  t.throws(() => findOccurrences(registry, source), ArgumentError);
+  t.notThrows(() => findOccurrences(source, registry), ArgumentError) ;
+});
+
+test.skip('it finds multiple occurences', t => {
   const {source, helloGrammar} = t.context;
 
-  t.throws(() => findOccurrences({}, helloGrammar), ArgumentError);
-  t.throws(() => findOccurrences(source, {}), ArgumentError);
-  t.throws(() => findOccurrences(helloGrammar, source), ArgumentError);
-  t.notThrows(() => findOccurrences(source, helloGrammar), ArgumentError);
+  const occurences = findOccurrences();
 });
