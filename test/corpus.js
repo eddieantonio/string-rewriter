@@ -19,7 +19,7 @@ import {readFileSync} from 'fs';
 import test from 'ava';
 import sqlite3 from 'sqlite3';
 
-import {Corpus} from '../';
+import {SourceFile, Corpus} from '../';
 
 
 const testDb = readFileSync(`${__dirname}/initial.sql`, 'utf8');
@@ -31,7 +31,7 @@ const hashC = '6d2f748e01c7a813b876ce2f3a3140048885aa2a120903882dad0c5d22756e7e'
 sqlite3.verbose();
 
 test.beforeEach(async t => {
-  const conn = t.context.conn = await testSQLite3Connection();
+  const conn = t.context.conn = await createTestSQLite3Connection();
   t.context.corpus = new Corpus(conn);
 });
 
@@ -44,8 +44,29 @@ test('#length returns the database length', async t => {
   t.is(await corpus.size(), 3);
 });
 
+test('#forEach() yields each result as a SourceFile.', async t => {
+  t.plan(8);
 
-function testSQLite3Connection() {
+  const {corpus} = t.context;
+  const sources = [];
+
+  const count = await corpus.forEach(source => sources.push(source));
+  t.is(count, 3);
+  t.is(sources.length, 3);
+
+  for (let source of sources) {
+    t.true(source instanceof SourceFile);
+  }
+
+  const [sourceA, sourceB, sourceC] = sources;
+
+  t.is(sourceA.hash, hashA);
+  t.is(sourceB.hash, hashB);
+  t.is(sourceC.hash, hashC);
+});
+
+
+function createTestSQLite3Connection() {
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database(':memory:');
     db.exec(testDb, (err)  => {

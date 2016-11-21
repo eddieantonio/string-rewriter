@@ -35,4 +35,48 @@ exports.Corpus = class Corpus {
       });
     });
   }
+
+  /**
+   * Calls the given
+   */
+  forEach(callback) {
+    const db = this._conn;
+    return new Promise((resolve, reject) => {
+      db.each(
+        `SELECT hash, ast, tokens FROM parsed_source`,
+        function (err, row) {
+          if (err) return reject(err);
+
+          callback(new SourceFileFromCorpus(row));
+        },
+        function (err, numberOfRows) {
+          if (err) reject(err);
+          else resolve(numberOfRows);
+        }
+      );
+    });
+  }
 };
+
+
+class SourceFileFromCorpus extends exports.SourceFile {
+  constructor({hash, ast, tokens}) {
+    super();
+
+    this._hash = hash;
+    this._ast = ast;
+    this._tokens = tokens;
+  }
+
+  get hash() {
+    return this._hash;
+  }
+
+  get ast() {
+    return this._ast;
+  }
+
+  get tokens() {
+    return this._tokens;
+  }
+}
