@@ -73,7 +73,6 @@ test('#get() yields a SourceFile.', async t => {
   t.true(source instanceof SourceFile);
   t.is(source.hash, hashA);
   t.true(source.ast instanceof Object);
-  t.true(source.tokens instanceof Object);
 });
 
 
