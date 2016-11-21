@@ -20,3 +20,19 @@ exports.GrammarRegistry = require('./lib/grammar-registry');
 
 exports.parseGrammar = require('./lib/parse-grammar');
 exports.globalRegistery = require('./lib/global-registry');
+
+exports.Corpus = class Corpus {
+  constructor(connection) {
+    this._conn = connection;
+  }
+
+  size() {
+    const db = this._conn;
+    return new Promise((resolve, reject) => {
+      db.get(`SELECT COUNT(*) as count FROM parsed_source`, (err, row) => {
+        if (err) reject(err);
+        else resolve(row.count);
+      });
+    });
+  }
+};
