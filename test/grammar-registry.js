@@ -59,3 +59,17 @@ test('is iterable', t => {
   const [[name, _]] = Array.from(registry);
   t.is(name, '<name>');
 });
+
+test('finds all matching grammars', t => {
+  const registry = new GrammarRegistry();
+  registry.addRootGrammar(new Grammar('<a>', () => true));
+  registry.addRootGrammar(new Grammar('<b>', () => { throw new SyntaxError; }));
+  registry.addRootGrammar(new Grammar('<c>', () => true));
+
+  const results = registry.findAllMatchingGrammars('string');
+  t.is(results.length, 2);
+
+  const [a, c] = results;
+  t.is(a, registry.get('<a>'));
+  t.is(c, registry.get('<c>'));
+});
