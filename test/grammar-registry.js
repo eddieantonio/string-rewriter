@@ -56,6 +56,6 @@ test('is iterable', t => {
   registry.addRootGrammar(new Grammar('<name>', () => {}));
 
   t.deepEqual(Array.from(registry).length, 1);
-  const [[name, fn]] = Array.from(registry);
+  const [[name, _]] = Array.from(registry);
   t.is(name, '<name>');
 });
