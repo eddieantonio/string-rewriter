@@ -78,3 +78,17 @@ test('parses UUIDs', t => {
   t.false(uuid.parse('f81d4fae-7dec-11d0-a765-a0c91e6bf6'));
   t.false(uuid.parse('f81d4fae-7dec-11d0-a765-a0u91e6bf6'));
 });
+
+
+test('parses SemVer <http://semver.org/>', t => {
+  const semver = globalRegistry.get('semver');
+
+  t.true(semver.parse('2.0.0'));
+  t.true(semver.parse('0.1.0'));
+  t.true(semver.parse('1.0.0-beta'));
+  t.true(semver.parse('2.0.0-rc.2'));
+  t.false(semver.parse('2.0.x'));
+  t.false(semver.parse('0.1'));
+  t.false(semver.parse('=v1.2.3'));
+  t.false(semver.parse('>=2.5.0'));
+});
