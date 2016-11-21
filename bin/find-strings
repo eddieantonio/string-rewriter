@@ -1,12 +1,40 @@
 #!/usr/bin/env node
 
-const {Corpus, _Persist} = require('../');
+const fs = require('fs');
+const ProgressBar = require('progress');
+const {Corpus, Persist, globalRegistry} = require('../');
+
 
 const [_node, _script, filename] = process.argv;
-const corpus = Corpus.connect(filename);
+/* Check that the file exists. */
+fs.statSync(filename);
 
-corpus.forEach(source => {
-  console.log(source.hash);
+const corpus = Corpus.connect(filename);
+const persist = Persist.connect();
+
+corpus.size().then(total => {
+  const progress = new ProgressBar('[:bar] :percent (:current/:total), :etas left', { total });
+
+  return corpus.forEach(source => {
+    const occurrences = [];
+    for (const string of source.strings()) {
+      for (const grammar of globalRegistry.findAllMatchingGrammars(string)) {
+        occurrences.push(grammar);
+      }
+    }
+
+    persist.addOccurrences(source.hash, occurrences)
+      .then(progress.tick())
+      .catch(err => {
+        console.error(err);
+        process.exit(-1);
+      });
+  });
+})
+.then(() => {
+  process.exit(0);
+  // Technically, there are write streams still open,
+  // but I can't be assed to figure out what they are.
 });
 
 /* vim: set ft=javascript: */

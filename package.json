@@ -14,7 +14,8 @@
     "url": "https://github.com/eddieantonio/string-rewriter.git"
   },
   "devDependencies": {
-    "ava": "^0.16.0"
+    "ava": "^0.16.0",
+    "progress": "^1.1.8"
   },
   "dependencies": {
     "common-errors": "^1.0.0",
