@@ -16,10 +16,10 @@
 
 import test from 'ava';
 
-import {globalRegistery} from '../';
+import {globalRegistry} from '../';
 
 test('parses ISO 8601 dates', t => {
-  const date = globalRegistery.get('iso8601-date');
+  const date = globalRegistry.get('iso8601-date');
 
   t.true(date.parse('1992-02-27'));
   t.true(date.parse('1992-02-27'));
@@ -27,7 +27,7 @@ test('parses ISO 8601 dates', t => {
 });
 
 test('parses ISO 8601 datetimes', t => {
-  const datetime = globalRegistery.get('iso8601-datetime');
+  const datetime = globalRegistry.get('iso8601-datetime');
 
   t.true(datetime.parse('1992-02-27T13:00:00'));
   t.true(datetime.parse('1992-02-27T13:00:00-06:00'));
@@ -37,7 +37,7 @@ test('parses ISO 8601 datetimes', t => {
 });
 
 test('parses URIs', t => {
-  const uri = globalRegistery.get('rfc3986-uri');
+  const uri = globalRegistry.get('rfc3986-uri');
 
   t.true(uri.parse('http://example.org'));
   t.true(uri.parse('https://example.org/'));
@@ -53,7 +53,7 @@ test('parses URIs', t => {
 });
 
 test('parses IPv4 addresses', t => {
-  const ipv4 = globalRegistery.get('rfc1123-ipv4');
+  const ipv4 = globalRegistry.get('rfc1123-ipv4');
 
   t.true(ipv4.parse('127.0.0.1'));
   t.true(ipv4.parse('255.255.255.255'));
@@ -61,7 +61,7 @@ test('parses IPv4 addresses', t => {
 });
 
 test('parses IPv6 addresses', t => {
-  const ipv6 = globalRegistery.get('rfc3513-ipv6');
+  const ipv6 = globalRegistry.get('rfc3513-ipv6');
 
   t.true(ipv6.parse('FEDC:BA98:7654:3210:FEDC:BA98:7654:3210'));
   t.true(ipv6.parse('::1'));

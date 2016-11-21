@@ -21,5 +21,5 @@ exports.Corpus = require('./lib/corpus');
 exports.Persist = require('./lib/persist');
 
 exports.parseGrammar = require('./lib/parse-grammar');
-exports.globalRegistery = require('./lib/global-registry');
+exports.globalRegistry = require('./lib/global-registry');
 
