@@ -47,3 +47,19 @@ test('parses URIs', t => {
   t.true(uri.parse('git+ssh://user@server/project.git'));
   t.false(uri.parse('https://example.org/search page.php?q=hello#content'));
 });
+
+test('parses IPv4 addresses', t => {
+  const ipv4 = globalRegistery.get('rfc1123-ipv4');
+
+  t.true(ipv4.parse('127.0.0.1'));
+  t.true(ipv4.parse('255.255.255.255'));
+  t.false(ipv4.parse('::1'));
+});
+
+test('parses IPv6 addresses', t => {
+  const ipv6 = globalRegistery.get('rfc3513-ipv6');
+
+  t.true(ipv6.parse('FEDC:BA98:7654:3210:FEDC:BA98:7654:3210'));
+  t.true(ipv6.parse('::1'));
+  t.false(ipv6.parse('127.0.0.1'));
+});
