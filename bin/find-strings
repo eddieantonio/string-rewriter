@@ -1,22 +1,57 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
+const heapdump = require('heapdump');
+
+const {statSync} = require('fs');
 const ProgressBar = require('progress');
 const {Corpus, Persist, globalRegistry, findOccurrences} = require('../');
 
 const [_node, _script, filename] = process.argv;
 /* Check that the file exists. */
-fs.statSync(filename);
+try {
+  statSync(filename);
+} catch (e) {
+  if (filename) {
+    console.error(`Could not find ${filename}`);
+  } else {
+    console.error(`Must provide a filename`);
+  }
+  process.exit(-1);
+}
 
 const corpus = Corpus.connect(filename);
 const persist = Persist.connect();
 
-corpus.size().then(total => {
+function pause(seconds) {
+  console.error(`Pausing for ${seconds} seconds...`);
+  return new Promise(resolve => setTimeout(resolve, 1000 * seconds));
+}
+
+function wait() {
+  return new Promise(resolve => {
+    console.error('Waiting for input...');
+    process.stdin.resume();
+    process.stdin.once('data', () => {
+      process.stdin.pause();
+      resolve();
+    });
+  });
+}
+
+Promise.resolve().then(() => {
+//wait().then(() => {
+  return corpus.size();
+})
+.then(total => {
   const progress = new ProgressBar('[:bar] :percent (:current/:total), :etas left', { total });
+
+  heapdump.writeSnapshot((err, filename) => {
+    console.log(filename);
+  });
 
   return corpus.forEach(source => {
     persist.addOccurrences(source.hash, findOccurrences(source, globalRegistry))
-      .then(progress.tick())
+      .then(() => progress.tick())
       .catch(err => {
         console.error(err);
         process.exit(-1);
@@ -24,7 +59,11 @@ corpus.size().then(total => {
   });
 })
 .then(() => {
+  heapdump.writeSnapshot((err, filename) => {
+    console.log(filename);
+  });
   persist.disconnect();
 });
 
-/* vim: set ft=javascript: */
+/*eslint no-console: false*/
+/*vim: set ft=javascript: */
