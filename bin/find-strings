@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 
-//const heapdump = require('heapdump');
-
 const {statSync} = require('fs');
 const ProgressBar = require('progress');
 const {Corpus, Persist, globalRegistry, findOccurrences} = require('../');
 
-const [_node, _script, filename] = process.argv;
+const [_node, _script, filename, hash] = process.argv;
+
 /* Check that the file exists. */
 try {
   statSync(filename);
@@ -19,46 +18,25 @@ try {
   process.exit(-1);
 }
 
+if (!hash) {
+  console.error(`Hash required`);
+  process.exit(-1);
+}
+
 const corpus = Corpus.connect(filename);
 const persist = Persist.connect();
 
-function pause(seconds) {
-  console.error(`Pausing for ${seconds} seconds...`);
-  return new Promise(resolve => setTimeout(resolve, 1000 * seconds));
-}
-
-function wait() {
-  return new Promise(resolve => {
-    console.error('Waiting for input...');
-    process.stdin.resume();
-    process.stdin.once('data', () => {
-      process.stdin.pause();
-      resolve();
-    });
-  });
-}
-
-Promise.resolve().then(() => {
-//wait().then(() => {
-  return corpus.size();
-})
-.then(total => {
-  const progress = new ProgressBar('[:bar] :percent (:current/:total), :etas left', { total });
-
-  //heapdump.writeSnapshot((err, filename) => { console.log(filename); });
-
-  return corpus.forEach(source => {
-    persist.addOccurrences(source.hash, findOccurrences(source, globalRegistry))
-      .then(() => progress.tick())
-      .catch(err => {
-        console.error(err);
-        process.exit(-1);
-      });
-  });
+corpus.get(hash)
+.then(source => {
+  const occurrences = findOccurrences(source, globalRegistry);
+  return persist.addOccurrences(source.hash, occurrences);
 })
 .then(() => {
-  //heapdump.writeSnapshot((err, filename) => { console.log(filename); });
   persist.disconnect();
+})
+.catch(err => {
+  console.error(err);
+  process.exit(-1);
 });
 
 /*eslint no-console: false*/
