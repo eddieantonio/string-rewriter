@@ -67,3 +67,14 @@ test('parses IPv6 addresses', t => {
   t.true(ipv6.parse('::1'));
   t.false(ipv6.parse('127.0.0.1'));
 });
+
+test('parses UUIDs', t => {
+  const uuid = globalRegistry.get('rfc4122-uuid');
+
+  t.true(uuid.parse('f81d4fae-7dec-11d0-a765-00a0c91e6bf6'));
+  t.true(uuid.parse('6c84fb90-12c4-11e1-840d-7b25c5ee775a'));
+  t.true(uuid.parse('110ec58a-a0f2-4ac4-8393-c866d813b8d1'));
+  t.false(uuid.parse('f1d4fae-7dec-11d0-a765-00a0c91e6bf6'));
+  t.false(uuid.parse('f81d4fae-7dec-11d0-a765-a0c91e6bf6'));
+  t.false(uuid.parse('f81d4fae-7dec-11d0-a765-a0u91e6bf6'));
+});
