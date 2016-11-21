@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const heapdump = require('heapdump');
+//const heapdump = require('heapdump');
 
 const {statSync} = require('fs');
 const ProgressBar = require('progress');
@@ -45,9 +45,7 @@ Promise.resolve().then(() => {
 .then(total => {
   const progress = new ProgressBar('[:bar] :percent (:current/:total), :etas left', { total });
 
-  heapdump.writeSnapshot((err, filename) => {
-    console.log(filename);
-  });
+  //heapdump.writeSnapshot((err, filename) => { console.log(filename); });
 
   return corpus.forEach(source => {
     persist.addOccurrences(source.hash, findOccurrences(source, globalRegistry))
@@ -59,9 +57,7 @@ Promise.resolve().then(() => {
   });
 })
 .then(() => {
-  heapdump.writeSnapshot((err, filename) => {
-    console.log(filename);
-  });
+  //heapdump.writeSnapshot((err, filename) => { console.log(filename); });
   persist.disconnect();
 });
 
