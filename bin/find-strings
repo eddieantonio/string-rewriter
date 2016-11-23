@@ -1,43 +1,54 @@
 #!/usr/bin/env node
 
-const {statSync} = require('fs');
+const {existsSync} = require('fs');
 const ProgressBar = require('progress');
 const {Corpus, Persist, globalRegistry, findOccurrences} = require('../');
 
-const [_node, _script, filename, hash] = process.argv;
+const [_node, _script, mode, filename, hash] = process.argv;
 
 /* Check that the file exists. */
-try {
-  statSync(filename);
-} catch (e) {
-  if (filename) {
-    console.error(`Could not find ${filename}`);
-  } else {
-    console.error(`Must provide a filename`);
-  }
-  process.exit(-1);
-}
-
-if (!hash) {
-  console.error(`Hash required`);
-  process.exit(-1);
-}
+mode || die(`Must provide a mode: either 'count' or 'display'`);
+filename || die(`Must provide a filename`);
+existsSync(filename) || die(`Could not find ${filename}`);
+hash || die('Must provide a file hash');
 
 const corpus = Corpus.connect(filename);
-const persist = Persist.connect();
 
-corpus.get(hash)
-.then(source => {
-  const occurrences = findOccurrences(source, globalRegistry);
-  return persist.addOccurrences(source.hash, occurrences);
-})
-.then(() => {
-  persist.disconnect();
-})
-.catch(err => {
-  console.error(err);
+const action = mode === 'count' ? count : display;
+action(corpus.get(hash)).catch(die);
+
+function count(promise) {
+  const persist = Persist.connect();
+  return promise
+    .then(source => {
+      const occurrences = findOccurrences(source, globalRegistry);
+      return persist.addOccurrences(source.hash, occurrences);
+    })
+    .then(() => {
+      persist.disconnect();
+    });
+}
+
+function display(promise) {
+  return promise
+    .then(source => {
+      const occurrences = findOccurrences(source, globalRegistry, true);
+      for (const {string, grammars} of occurrences) {
+        if (grammars.length < 1) {
+          continue;
+        }
+
+        console.log(...grammars.map(x => x.name));
+        console.log(`\t${string}`);
+      }
+    });
+}
+
+/* Just like in Perl! */
+function die(...args)  {
+  console.error(...args);
   process.exit(-1);
-});
+}
 
 /*eslint no-console: false*/
 /*vim: set ft=javascript: */
