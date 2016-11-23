@@ -26,7 +26,7 @@ exports.globalRegistry = require('./lib/global-registry');
 const {SourceFile, GrammarRegistry} = exports;
 
 const {ArgumentError} = require('common-errors');
-exports.findOccurrences = function findOccurrences(source, grammars) {
+exports.findOccurrences = function findOccurrences(source, grammars, with_string=false) {
   if (!(source instanceof SourceFile)) {
     throw new ArgumentError('source');
   }
@@ -35,12 +35,13 @@ exports.findOccurrences = function findOccurrences(source, grammars) {
   }
 
   const occurrences = [];
-  for (const [pos, string] of source.strings().entries()) {
-    occurrences.push([]);
-    const entry = occurrences[pos];
+  for (const string of source.strings()) {
+    const entry = [];
     for (const grammar of grammars.findAllMatchingGrammars(string)) {
       entry.push(grammar);
     }
+
+    occurrences.push(with_string ? { string, grammars: entry } : entry);
   }
 
   return occurrences;

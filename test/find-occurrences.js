@@ -24,7 +24,7 @@ import {SourceFile, GrammarRegistry, Grammar, findOccurrences} from '../';
 test.beforeEach(t => {
   t.context.source = SourceFile.fromString(`
     console.log('hello, world!');
-    console.log('goodby, world!');
+    console.log('goodbye, world!');
   `);
 
   const registry = t.context.registry = new GrammarRegistry();
@@ -49,7 +49,7 @@ test('throws if not given a SourceFile and a GrammarRegistry', t => {
   t.notThrows(() => findOccurrences(source, registry), ArgumentError) ;
 });
 
-test('it finds multiple occurrences', t => {
+test('finds multiple occurrences!', t => {
   const {source, registry} = t.context;
   const occurrences = findOccurrences(source, registry);
 
@@ -59,6 +59,20 @@ test('it finds multiple occurrences', t => {
   const expected = [
     [hello, always],
     [always]
+  ];
+  t.deepEqual(occurrences, expected);
+});
+
+test('returns the matching strings when requested', t => {
+  const {source, registry} = t.context;
+  const occurrences = findOccurrences(source, registry, true);
+
+  const [always, hello] = ['always', 'hello'].map(s => registry.get(s));
+
+  t.is(occurrences.length, 2);
+  const expected = [
+    { string: 'hello, world!', grammars: [hello, always]},
+    { string: 'goodbye, world!', grammars: [always] }
   ];
   t.deepEqual(occurrences, expected);
 });
