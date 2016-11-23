@@ -14,35 +14,16 @@
  * limitations under the License.
  */
 
+/* Classes.  */
 exports.SourceFile = require('./lib/source-file');
 exports.Grammar = require('./lib/grammar');
 exports.GrammarRegistry = require('./lib/grammar-registry');
 exports.Corpus = require('./lib/corpus');
 exports.Persist = require('./lib/persist');
 
+/* Functions */
 exports.parseGrammar = require('./lib/parse-grammar');
+exports.findOccurrences = require('./lib/find-occurrences');
+
+/* Globals */
 exports.globalRegistry = require('./lib/global-registry');
-
-const {SourceFile, GrammarRegistry} = exports;
-
-const {ArgumentError} = require('common-errors');
-exports.findOccurrences = function findOccurrences(source, grammars, with_string=false) {
-  if (!(source instanceof SourceFile)) {
-    throw new ArgumentError('source');
-  }
-  if (!(grammars instanceof GrammarRegistry)) {
-    throw new ArgumentError('grammar');
-  }
-
-  const occurrences = [];
-  for (const string of source.strings()) {
-    const entry = [];
-    for (const grammar of grammars.findAllMatchingGrammars(string)) {
-      entry.push(grammar);
-    }
-
-    occurrences.push(with_string ? { string, grammars: entry } : entry);
-  }
-
-  return occurrences;
-};
