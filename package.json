@@ -7,7 +7,6 @@
   "scripts": {
     "test": "ava"
   },
-  "pre-commit": ["test"],
   "author": "Eddie Antonio Santos <easantos@ualberta.ca>",
   "license": "Apache-2.0",
   "repository": {
